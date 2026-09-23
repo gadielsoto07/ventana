@@ -26,3 +26,7 @@ jobs:
         with:
           name: package-apk
           path: bin/*.apk
+- name: Compilar APK con Buildozer
+        uses: yveskalume/action-buildozer@master
+        with:
+          command: buildozer android debug
