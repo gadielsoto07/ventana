@@ -1,39 +1,28 @@
-nombre: CI
-en:
-insertar:
-ramas: [principal]
+name: Build Kivy APK
 
-trabajos:
-compilar:
-ejecutar en: ubuntu-20.04
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
 
-pasos:
-usos: acciones/checkout@v2
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-nombre: Obtener fecha
-id: obtener-fecha
-ejecutar: | echo "::set-output name=date::$(/bin/date -u "+%Y%m%d")"
-shell: bash
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
 
-nombre: Directorio global de caché de Buildozer
-usos: actions/cache@v2
-con:
-ruta: .buildozer_global
-clave: buildozer-global-${{ hashFiles('buildozer.spec') }} # Reemplazar con la ruta
+      - name: Compilar APK con Buildozer
+        uses: ArtemSdm/buildozer-action@v1.2
+        with:
+          command: buildozer android debug
+          buildozer_version: master
 
-usos: actions/cache@v2
-con:
-ruta: .buildozer Clave: ${{ runner.os }}-${{ steps.get-date.outputs.date }}-${{ hashFiles('buildozer.spec') }}
-
-Nombre: Construir con Buildozer
-Usos: ArtemSBulgakov/buildozer-action@v1
-ID: buildozer
-Con:
-Comando: buildozer android debug
-buildozer_version: estable
-
-Nombre: Subir artefactos
-Usos: actions/upload-artifact@v2
-Con:
-Nombre: Paquete
-Ruta: ${{ steps.buildozer.outputs.filename }}
+      - name: Subir el APK como artefacto
+        uses: actions/upload-artifact@v4
+        with:
+          name: package-apk
+          path: bin/*.apk
