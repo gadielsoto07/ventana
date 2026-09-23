@@ -10,7 +10,6 @@ ejecutar en: ubuntu-20.04
 pasos:
 usos: acciones/checkout@v2
 
-usado para almacenar en caché dependencias con tiempo de espera
 nombre: Obtener fecha
 id: obtener-fecha
 ejecutar: | echo "::set-output name=date::$(/bin/date -u "+%Y%m%d")"
