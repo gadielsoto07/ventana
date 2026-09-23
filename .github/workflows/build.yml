@@ -1,0 +1,40 @@
+nombre: CI
+en:
+insertar:
+ramas: [principal]
+
+trabajos:
+compilar:
+ejecutar en: ubuntu-20.04
+
+pasos:
+usos: acciones/checkout@v2
+
+usado para almacenar en caché dependencias con tiempo de espera
+nombre: Obtener fecha
+id: obtener-fecha
+ejecutar: | echo "::set-output name=date::$(/bin/date -u "+%Y%m%d")"
+shell: bash
+
+nombre: Directorio global de caché de Buildozer
+usos: actions/cache@v2
+con:
+ruta: .buildozer_global
+clave: buildozer-global-${{ hashFiles('buildozer.spec') }} # Reemplazar con la ruta
+
+usos: actions/cache@v2
+con:
+ruta: .buildozer Clave: ${{ runner.os }}-${{ steps.get-date.outputs.date }}-${{ hashFiles('buildozer.spec') }}
+
+Nombre: Construir con Buildozer
+Usos: ArtemSBulgakov/buildozer-action@v1
+ID: buildozer
+Con:
+Comando: buildozer android debug
+buildozer_version: estable
+
+Nombre: Subir artefactos
+Usos: actions/upload-artifact@v2
+Con:
+Nombre: Paquete
+Ruta: ${{ steps.buildozer.outputs.filename }}
